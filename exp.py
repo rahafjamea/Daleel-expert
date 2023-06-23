@@ -1,10 +1,23 @@
 from experta import *
+import math
 
 
 class AgeRange(Fact):
     pass
 
 class Guide(KnowledgeEngine):
+    @staticmethod
+    def _output(file):
+        print('Here is a List of recommended sites: \n')
+        content= file.readlines()
+        result={}
+        for i in range(0,pace*days,pace):
+            site=[]
+            for j in range(i,i+pace):
+               site.append(content[j].strip())
+            tt={"Day":math.ceil(i/pace+1), "Sites": site}
+            result.update(tt)
+            print(result)
 
     @Rule(NOT(AgeRange(W())), salience=51)
     def ageRange(self):
@@ -38,20 +51,340 @@ class Guide(KnowledgeEngine):
         ans= input("Are you interested in religious sites ( y/n )? ")
         self.declare(Fact(Religion=ans))
 
-    @Rule(salience=46)
+    @Rule(Fact(History='y'),Fact(Religion='y'),salience=46)
+    def package(self):
+        ans= input("Would you like to continue with the historical and religious sites package? ( y/n )? ")
+        self.declare(Fact(Package=ans))
+
+    @Rule(Fact(Package="y"),Fact(Healthy="y"), salience=45)
+    def history_cat_healthy(self):
+        ans= input("Which of these historical sites are you interested in? (You can enter more than one seperated by a comma)\n 1. Museums, Old Houses and Palaces \n 2. Old Markets \n 3. Hisotical Monuments \n ")
+        ans=ans.replace(" ", "")
+        self.declare(Fact(HistoryCatHealthy=ans))
+        print(ans)
+
+    @Rule(Fact(Package="y"), Fact(Healthy="n"), salience=45)
+    def history_cat_non_healthy(self):
+        ans= input("Which of these historical sites are you interested in? (You can enter more than one seperated by a comma)\n 1. Museums, Old Houses and Palaces \n 2. Hisotical Monuments \n ")
+        ans=ans.replace(" ", "")
+        self.declare(Fact(HistoryCatNonHealthy=ans))
+        print(ans)
+
+    @Rule(Fact(Package="y"),salience=44)
+    def religion_cat(self):
+        ans= input("Which of these religious sites are you interested in? (You can enter more than one seperated by a comma)\n 1. Islamic Religious Sites \n 2. Christian Religious Sites \n ")
+        ans=ans.replace(" ", "")
+        self.declare(Fact(ReligionCat=ans))
+        print(ans)
+
+    @Rule(Fact(Package="n"),salience=43)
     def culture(self):
         ans= input("Are you interested in cultural sites ( y/n )? ")
         self.declare(Fact(Culture=ans))
 
-    @Rule(salience=45)
+    @Rule(Fact(Package="n"),salience=42)
     def nature(self):
         ans= input("Are you interested in natural sites ( y/n )? ")
         self.declare(Fact(Nature=ans))
 
-    @Rule(salience=44)
+    @Rule(Fact(Package="n"),salience=41)
     def entertainment(self):
         ans= input("Are you interested in entertainment sites ( y/n )? ")
         self.declare(Fact(Entertainment=ans))
+
+    @Rule(salience=40)
+    def pace(self):
+        ans= input("Would you like your route pace to be? \n n: normal \n s: slow \n")
+        self.declare(Fact(Pace=ans))
+
+    @Rule(Fact(Pace="n"), salience=39)
+    def space(self):
+        print('ahhh')
+        global pace
+        pace = 5
+    @Rule(Fact(Pace="s"), salience=39)
+    def npace(self):
+        print('ahh')
+        global pace
+        pace = 3
+
+    @Rule(salience=38)
+    def days(self):
+        ans= input("How many days are you staying? ")
+        global days
+        days=int(ans)
+        self.declare(Fact(Days=ans))
+        print(ans)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='1'),
+        Fact(ReligionCat='1')
+    )
+    def p_res1(self):
+        file = open('package res/p_res1.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='1'),
+        Fact(ReligionCat='2')
+    )
+    def p_res2(self):
+        file = open('package res/p_res2.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='1'),
+        Fact(ReligionCat='1,2')
+    )
+    def p_res3(self):
+        file = open('package res/p_res3.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='2'),
+        Fact(ReligionCat='1')
+    )
+    def p_res4(self):
+        file = open('package res/p_res4.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='2'),
+        Fact(ReligionCat='2')
+    )
+    def p_res5(self):
+        file = open('package res/p_res5.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='2'),
+        Fact(ReligionCat='1,2')
+    )
+    def p_res6(self):
+        file = open('package res/p_res6.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='3'),
+        Fact(ReligionCat='1')
+    )
+    def p_res7(self):
+        file = open('package res/p_res7.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='3'),
+        Fact(ReligionCat='2')
+    )
+    def p_res8(self):
+        file = open('package res/p_res8.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='3'),
+        Fact(ReligionCat='1,2')
+    )
+    def p_res9(self):
+        file = open('package res/p_res9.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='1,2'),
+        Fact(ReligionCat='1')
+    )
+    def p_res10(self):
+        file = open('package res/p_res10.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='1,2'),
+        Fact(ReligionCat='2')
+    )
+    def p_res11(self):
+        file = open('package res/p_res11.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='1,2'),
+        Fact(ReligionCat='1,2')
+    )
+    def p_res12(self):
+        file = open('package res/p_res12.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='1,3'),
+        Fact(ReligionCat='1')
+    )
+    def p_res13(self):
+        file = open('package res/p_res13.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='1,3'),
+        Fact(ReligionCat='2')
+    )
+    def p_res14(self):
+        file = open('package res/p_res14.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='1,3'),
+        Fact(ReligionCat='1,2')
+    )
+    def p_res15(self):
+        file = open('package res/p_res15.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='2,3'),
+        Fact(ReligionCat='1')
+    )
+    def p_res16(self):
+        file = open('package res/p_res16.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='2,3'),
+        Fact(ReligionCat='2')
+    )
+    def p_res17(self):
+        file = open('package res/p_res17.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='2,3'),
+        Fact(ReligionCat='1,2')
+    )
+    def p_res18(self):
+        file = open('package res/p_res18.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='1,2,3'),
+        Fact(ReligionCat='1')
+    )
+    def p_res19(self):
+        file = open('package res/p_res19.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='1,2,3'),
+        Fact(ReligionCat='2')
+    )
+    def p_res20(self):
+        file = open('package res/p_res20.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='y'),
+        Fact(HistoryCatHealthy='1,2,3'),
+        Fact(ReligionCat='1,2')
+    )
+    def p_res21(self):
+        file = open('package res/p_res21.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='n'),
+        Fact(HistoryCatNonHealthy='1'),
+        Fact(ReligionCat='1')
+    )
+    def p_res22(self):
+        file = open('package res/p_res22.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='n'),
+        Fact(HistoryCatNonHealthy='1'),
+        Fact(ReligionCat='2')
+    )
+    def p_res23(self):
+        file = open('package res/p_res23.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='n'),
+        Fact(HistoryCatNonHealthy='1'),
+        Fact(ReligionCat='1,2')
+    )
+    def p_res24(self):
+        file = open('package res/p_res24.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='n'),
+        Fact(HistoryCatNonHealthy='2'),
+        Fact(ReligionCat='1')
+    )
+    def p_res25(self):
+        file = open('package res/p_res25.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='n'),
+        Fact(HistoryCatNonHealthy='2'),
+        Fact(ReligionCat='2')
+    )
+    def p_res26(self):
+        file = open('package res/p_res26.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='n'),
+        Fact(HistoryCatNonHealthy='2'),
+        Fact(ReligionCat='1,2')
+    )
+    def p_res27(self):
+        file = open('package res/p_res27.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='n'),
+        Fact(HistoryCatNonHealthy='1,2'),
+        Fact(ReligionCat='1')
+    )
+    def p_res28(self):
+        file = open('package res/p_res28.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='n'),
+        Fact(HistoryCatNonHealthy='1,2'),
+        Fact(ReligionCat='2')
+    )
+    def p_res29(self):
+        file = open('package res/p_res29.txt', 'r')
+        Guide._output(file)
+
+    @Rule(
+        Fact(Healthy='n'),
+        Fact(HistoryCatNonHealthy='1,2'),
+        Fact(ReligionCat='1,2')
+    )
+    def p_res30(self):
+        file = open('package res/p_res30.txt', 'r')
+        Guide._output(file)
 
     @Rule(
         Fact(Healthy='y'),
@@ -62,11 +395,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res1(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res1.txt', 'r')
+        file = open('res/res1.txt', 'r')
         # This will print every line one by one in the file
-        for each in file:
-         print (each)
+        Guide._output(file)
+         
         
     @Rule(
         Fact(Healthy='y'),
@@ -77,10 +409,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res2(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res2.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res2.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -91,10 +422,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res3(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res3.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res3.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -105,10 +435,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res4(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res4.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res4.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -119,10 +448,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res5(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res5.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res5.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -133,10 +461,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res6(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res6.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res6.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -147,10 +474,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res7(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res7.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res7.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -161,10 +487,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res8(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res8.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res8.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -175,10 +500,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res9(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res9.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res9.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -189,10 +513,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res10(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res10.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res10.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -203,10 +526,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res11(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res11.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res11.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -217,10 +539,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res12(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res12.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res12.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -231,10 +552,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res13(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res13.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res13.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -245,10 +565,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res14(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res14.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res14.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -259,10 +578,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res15(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res15.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res15.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -273,10 +591,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res16(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res16.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res16.txt', 'r')
+        Guide._output(file)
+         
 
     #second 16
     @Rule(
@@ -288,11 +605,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res17(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res17.txt', 'r')
+        file = open('res/res17.txt', 'r')
         # This will print every line one by one in the file
-        for each in file:
-         print (each)
+        Guide._output(file)
+         
         
     @Rule(
         Fact(Healthy='y'),
@@ -303,10 +619,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res18(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res18.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res18.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -317,10 +632,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res19(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res19.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res19.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -331,10 +645,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res20(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res20.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res20.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -345,10 +658,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res21(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res21.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res21.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -359,10 +671,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res22(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res22.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res22.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -373,10 +684,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res23(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res23.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res23.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -387,10 +698,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res24(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res24.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res24.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -401,10 +712,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res25(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res25.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res25.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(History='n'),
@@ -414,10 +725,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res26(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res26.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res26.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -428,10 +739,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res27(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res27.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res27.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(History='n'),
@@ -441,10 +752,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res28(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res28.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res28.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -455,10 +766,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res29(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res29.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res29.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(History='n'),
@@ -468,10 +779,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res30(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res30.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res30.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='y'),
@@ -482,10 +793,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res31(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res31.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res31.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(History='n'),
@@ -495,9 +806,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res32(self):
-        file = open('res32.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res32.txt', 'r')
+        Guide._output(file)
+         
 
     #no walking
     @Rule(
@@ -509,11 +820,11 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res33(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res33.txt', 'r')
+        
+        file = open('res/res33.txt', 'r')
         # This will print every line one by one in the file
-        for each in file:
-         print (each)
+        Guide._output(file)
+         
         
     @Rule(
         Fact(Healthy='n'),
@@ -524,10 +835,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res34(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res34.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res34.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -538,10 +849,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res35(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res35.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res35.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -552,10 +863,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res36(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res36.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res36.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -566,10 +877,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res37(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res37.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res37.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -580,10 +891,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res38(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res38.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res38.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -594,10 +905,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res39(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res39.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res39.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -608,10 +919,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res40(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res40.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res40.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -622,10 +933,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res41(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res41.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res41.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -636,10 +947,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res42(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res42.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res42.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -650,10 +961,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res43(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res43.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res43.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -664,10 +975,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res44(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res44.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res44.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -678,10 +989,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res45(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res45.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res45.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -692,10 +1003,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res46(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res46.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res46.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -706,10 +1017,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res47(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res47.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res47.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -720,10 +1031,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res48(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res48.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res48.txt', 'r')
+        Guide._output(file)
+         
 
     #last 16
     @Rule(
@@ -735,11 +1046,11 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res49(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res49.txt', 'r')
+        
+        file = open('res/res49.txt', 'r')
         # This will print every line one by one in the file
-        for each in file:
-         print (each)
+        Guide._output(file)
+         
         
     @Rule(
         Fact(Healthy='n'),
@@ -750,10 +1061,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res50(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res50.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res50.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -764,10 +1075,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res51(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res51.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res51.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -778,10 +1089,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res52(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res52.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res52.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -792,10 +1103,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res53(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res53.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res53.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -806,10 +1117,10 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res54(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res54.txt', 'r')
-        for each in file:
-         print (each)
+        
+        file = open('res/res54.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -820,10 +1131,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res55(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res55.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res55.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -834,10 +1144,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='n')
     )
     def res56(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res56.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res56.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -848,10 +1157,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res57(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res57.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res57.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -862,10 +1170,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res59(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res59.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res59.txt', 'r')
+        Guide._output(file)
+         
 
 
     @Rule(
@@ -877,10 +1184,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res61(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res61.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res61.txt', 'r')
+        Guide._output(file)
+         
 
     @Rule(
         Fact(Healthy='n'),
@@ -891,10 +1197,9 @@ class Guide(KnowledgeEngine):
         Fact(Entertainment='y')
     )
     def res63(self):
-        print('Here is a List of recommended sites: \n')
-        file = open('res63.txt', 'r')
-        for each in file:
-         print (each)
+        file = open('res/res63.txt', 'r')
+        Guide._output(file)
+         
 
 g = Guide()
 g.reset()
