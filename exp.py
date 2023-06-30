@@ -1,5 +1,6 @@
 from experta import *
 import math
+import mysql.connector
 
 
 class AgeRange(Fact):
@@ -8,20 +9,23 @@ class AgeRange(Fact):
 class Guide(KnowledgeEngine):
     @staticmethod
     def _output(file):
-        print('Here is a List of recommended sites: \n')
+        print('Here is a List of recommended sites:')
         content= file.readlines()
         result={}
-        for i in range(0,pace*days,pace):
-            site=[]
-            for j in range(i,i+pace):
-               site.append(content[j].strip())
-            tt={"Day":math.ceil(i/pace+1), "Sites": site}
-            result.update(tt)
-            print(result)
+        for i in range( 0 , min(pace*days,len(content)) , pace):
+            site={}
+            for j in range( i , min(i+pace,math.ceil(len(content)/pace)) ) :
+                site={"Site": content[j].strip(), "Day":math.ceil(i/pace+1), "Order":j-i+1}
+                result.update(site)
+                print(result)
+
+    @DefFacts()
+    def _initial_action(self):
+        yield Fact(Package="n")
 
     @Rule(NOT(AgeRange(W())), salience=51)
     def ageRange(self):
-        self.declare(AgeRange(input("What is your age range? ")))
+        self.declare(AgeRange(input("What is your age? ")))
 
     @Rule(AgeRange(P(lambda x: int(x) > 45)), AgeRange(W()), salience=50)
     def old(self):
@@ -61,21 +65,18 @@ class Guide(KnowledgeEngine):
         ans= input("Which of these historical sites are you interested in? (You can enter more than one seperated by a comma)\n 1. Museums, Old Houses and Palaces \n 2. Old Markets \n 3. Hisotical Monuments \n ")
         ans=ans.replace(" ", "")
         self.declare(Fact(HistoryCatHealthy=ans))
-        print(ans)
 
     @Rule(Fact(Package="y"), Fact(Healthy="n"), salience=45)
     def history_cat_non_healthy(self):
         ans= input("Which of these historical sites are you interested in? (You can enter more than one seperated by a comma)\n 1. Museums, Old Houses and Palaces \n 2. Hisotical Monuments \n ")
         ans=ans.replace(" ", "")
         self.declare(Fact(HistoryCatNonHealthy=ans))
-        print(ans)
 
     @Rule(Fact(Package="y"),salience=44)
     def religion_cat(self):
         ans= input("Which of these religious sites are you interested in? (You can enter more than one seperated by a comma)\n 1. Islamic Religious Sites \n 2. Christian Religious Sites \n ")
         ans=ans.replace(" ", "")
         self.declare(Fact(ReligionCat=ans))
-        print(ans)
 
     @Rule(Fact(Package="n"),salience=43)
     def culture(self):
@@ -99,12 +100,10 @@ class Guide(KnowledgeEngine):
 
     @Rule(Fact(Pace="n"), salience=39)
     def space(self):
-        print('ahhh')
         global pace
         pace = 5
     @Rule(Fact(Pace="s"), salience=39)
     def npace(self):
-        print('ahh')
         global pace
         pace = 3
 
